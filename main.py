@@ -16,22 +16,32 @@ from sklearn.svm import SVC
 frameStep = 15 # 15
 points = [9, 10, 15, 16] # 9, 10, 15, 16
 steps = [400, 100, 30, 30, 20, 80] # 400, 100, 30, 30, 20, 80
-
 labels = ["run", "walk", "dance"]
 
+print(f"#=====Loading data=====#")
 files, train_data = training(steps, points)
 x_train, y_train = trainTestSplit(train_data)
 
 print(f"x_train: {x_train.shape}")
 print(f"y_train: {y_train.shape}")
 
+print(f"#=====Training=====#")
 clf = make_pipeline(StandardScaler(), SVC(gamma='auto'))
 clf.fit(x_train, y_train)
+print(f"Done")
+print("")
 
-cap = cv2.VideoCapture("videos/test_data.mp4")
+cap = cv2.VideoCapture("dataSet/test_data.mp4")
 filePath = "test_data.json"
 allData = loadPoseData(filePath)
 
+fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
+fps = cap.get(cv2.CAP_PROP_FPS)
+size = (int(cap.get(3)),
+        int(cap.get(4)))
+videoWriter = cv2.VideoWriter('results.mp4', fourcc, fps, size)
+
+print(f"#=====Testing=====#")
 results = []
 count = 0
 x1, x2 = 0, 0
@@ -74,15 +84,17 @@ for i in range(len(allData)):
     x2 += 1
     count += 1
     loading = round(count/len(allData), 2)
-    print(f"\rloading: {loading}", end="")
+    print(f"\rtesting: {loading}", end="")
+    videoWriter.write(frame)
     cv2.imshow("frame", frame)
     if cv2.waitKey(1) & 0xFF == ord('q'): break
 
-#===========evaluate===========#
+
+print("\n")
+print(f"#=====Evaluate=====#")
 total = correct + wrong
 acc = round(correct / total, 2)
 
-print("\n")
 print(f"Steps   Files")
 for i in range(len(files)):
     print(f"{steps[i]}    {files[i]}")
@@ -90,4 +102,6 @@ print(f"Correct: {correct}")
 print(f"Wrong: {wrong}")
 print(f"Acc: {acc}")
 
+cap.release
+videoWriter.release
 cv2.destroyAllWindows()
