@@ -13,12 +13,12 @@ def loadPoseData():
             data = json.load(f)
             frames = len(data)
             outputs = np.zeros((frames, 17, 3))
-            print(name, frames)
+            print(f"Load json file: {name}")
+            print(f"Total frame: {frames}")
             for frame in range(frames):
                 poseData = data[frame]["keypoints"]
                 poseData = np.array(poseData)
                 poseData = poseData.reshape((17, 3))
                 outputs[frame] = poseData
             results.append(outputs)
-    
     return np.array(results)
