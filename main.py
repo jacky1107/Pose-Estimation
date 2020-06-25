@@ -7,11 +7,10 @@ import matplotlib.pyplot as plt
 from config import *
 from training import *
 from loadData import *
-from sklearn.neighbors import KNeighborsClassifier
 
+from sklearn.svm import SVC
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
-from sklearn.svm import SVC
 
 frameStep = 15 # 15
 points = [9, 10, 15, 16] # 9, 10, 15, 16
